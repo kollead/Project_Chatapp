@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter, 
+import {BrowserRouter as Router, 
         Switch, Route, Link} from 'react-router-dom';
 import ChatPage from './components/ChatPage/ChatPage'
 import LoginPage from './components/LoginPage/LoginPage'
