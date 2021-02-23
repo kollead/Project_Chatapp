@@ -8,7 +8,9 @@ import {createStore, applyMiddleware} from 'redux'
 import promiseMiddleware from 'redux-promise'
 import ReduxThunk from 'redux-thunk'
 import Reducer from './redux/reducers'
-const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)(createStore)
 
 ReactDOM.render(
   <React.StrictMode>
