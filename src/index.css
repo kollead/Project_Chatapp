@@ -29,13 +29,11 @@ code {
 .auth-wrapper {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh;  
   justify-content: center;
 }
 
-.auth-wrapper p {
-  color: #bf1650;
-}
+
 
 .auth-wrapper p::before {
   display: inline;
@@ -57,8 +55,7 @@ code {
   line-height: 2;
   text-align: left;
   display: block;
-  margin-bottom: 13px;
-  margin-top: 20px;
+  margin: 5px 0;
   
   font-size: 14px;
   font-weight: 200;
