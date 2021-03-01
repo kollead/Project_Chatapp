@@ -1,23 +1,30 @@
 import React, {useRef} from 'react'
 import { Link } from 'react-router-dom'
 import {useForm} from 'react-hook-form'
-import {BsExclamationTriangle} from "react-icons/bs"
+import firebase from '../../firebase'
 
 function RegisterPage() {
 
-    const {register, watch, errors} = useForm({mode:"onChange"});
+    const {register, watch, errors, handleSubmit} = useForm({mode:"onChange"});
     
     const password = useRef("")
+    let pass='';
+
     password.current=watch("password")
 
-    console.log(watch("email"))
+    const onSubmit = async(data) => {//data: hook form의 파라미터
+        let createdUser = await firebase
+            .auth()
+            .createUserWithEmailAndPassword(data.email, data.password)
+            console.log("createdUser", createdUser)
+        }
     
     return (
         <div className="auth-wrapper">
-            <div style={{textAlign: 'center'}}>
+            <div style={{textAlign: 'center'}}>``
                 <h3>Register</h3>
             </div>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <label>Email</label>
                 <input name="email" type="email"
                     ref={register({required:true, pattern: /^\S+@\S+$/i})} />
@@ -35,7 +42,7 @@ function RegisterPage() {
                         && <p>This field exceed maximum length, 10 characters</p>}
                 
                 <label>Password</label>
-                <input name="password" type="password"
+                <input name="password" type="password" 
                     ref={register({required:true, minLength:6})}/>
                     
                     {errors.password && errors.password.type==="required" 
