@@ -1,23 +1,46 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import { Link } from 'react-router-dom'
 import {useForm} from 'react-hook-form'
 import firebase from '../../firebase'
+import md5 from 'md5';
 
 function RegisterPage() {
 
     const {register, watch, errors, handleSubmit} = useForm({mode:"onChange"});
-    
+    const [ErrorFromSubmit, setErrorFromSubmit] = useState("")
+    const [Loading, setLoading] = useState(false)
+
     const password = useRef("")
     let pass='';
 
     password.current=watch("password")
 
     const onSubmit = async(data) => {//data: hook form의 파라미터
-        let createdUser = await firebase
-            .auth()
-            .createUserWithEmailAndPassword(data.email, data.password)
+        
+        console.log("data: ", data)
+        try {
+            setLoading(true)
+            let createdUser = await firebase
+                .auth()
+                .createUserWithEmailAndPassword(data.email, data.password)
+            
+
+            await createdUser.user.updateProfile({
+                displayName: data.name,
+                photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
+            })
+
             console.log("createdUser", createdUser)
+
+            setLoading(false)
+                    
+        } catch (error) {
+            setErrorFromSubmit(error.message)}
+            setTimeout(()=>{
+                setErrorFromSubmit("")}, 5000);            
         }
+    
+        
     
     return (
         <div className="auth-wrapper">
@@ -62,9 +85,11 @@ function RegisterPage() {
                     {errors.password_confirm && errors.password_confirm.type==="validate" 
                         && <p>The password do not match
                             </p>}
-                                
+
+                    {ErrorFromSubmit &&
+                    <p>{ErrorFromSubmit}</p>}                
                 
-                <input type="submit" value="submit"/>
+                <input type="submit" value="submit" disabled={Loading}/>
                 <Link style={{color:"gray", textDecoration:"none"}} to="login" >Login</Link>
             </form>
             </div>
