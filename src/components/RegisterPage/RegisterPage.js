@@ -32,6 +32,13 @@ function RegisterPage() {
 
             console.log("createdUser", createdUser)
 
+            //firebase 데이터베이스에 저장해주기
+
+            await firebase.database().ref("users").child(createdUser.user.uid).set({
+                name: createdUser.user.displayName,
+                image: createdUser.user.photoURL
+            })
+
             setLoading(false)
                     
         } catch (error) {
