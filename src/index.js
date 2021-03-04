@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {BrowserRouter as Router} from "react-router-dom";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -17,7 +18,9 @@ ReactDOM.render(
     <Provider store={createStoreWithMiddleware(Reducer,
       window.__REDUX_DEVTOOLS_EXTENTION__ &&
       window.__REDUX_DEVTOOLS_EXTENTION__())}>
+    <Router>
     <App />
+    </Router>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

@@ -12,14 +12,27 @@ function LoginPage() {
     
     const onSubmit = async(data) => {//data: hook form의 파라미터
         
-        
+        try {
+            setLoading(true)
+
+            await firebase.auth().signInWithEmailAndPassword(data.email, data.password)
+
+            setLoading(false)
+
+        } catch (error) {
+            setErrorFromSubmit(error.message)
+            setTimeout(() => {
+                setErrorFromSubmit("")
+            }, 5000);
+        }
+
     }
     
         
     
     return (
         <div className="auth-wrapper">
-            <div style={{textAlign: 'center'}}>``
+            <div style={{textAlign: 'center'}}>
                 <h3>Login</h3>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -44,7 +57,7 @@ function LoginPage() {
                     <p>{ErrorFromSubmit}</p>}                
                 
                 <input type="submit" value="submit" disabled={Loading}/>
-                <Link style={{color:"gray", textDecoration:"none"}} to="login" >Login</Link>
+                <Link style={{color:"gray", textDecoration:"none"}} to="register" >Register</Link>
             </form>
             </div>
     )

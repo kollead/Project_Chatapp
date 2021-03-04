@@ -51,7 +51,7 @@ function RegisterPage() {
     
     return (
         <div className="auth-wrapper">
-            <div style={{textAlign: 'center'}}>``
+            <div style={{textAlign: 'center'}}>
                 <h3>Register</h3>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
