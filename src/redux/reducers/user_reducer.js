@@ -15,6 +15,6 @@ export default function (state=initialUserState, action){
                 currentUser: action.payload,
                 isLoading: false
             }
-            default: return state;
+        default: return state;
     }
 }
