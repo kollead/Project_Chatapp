@@ -21,6 +21,7 @@ function App(props) {
         dispatch(setUser(user))
       }else{
         history.push("/login");
+        dispatch(setUser(user))
       }
     })
     

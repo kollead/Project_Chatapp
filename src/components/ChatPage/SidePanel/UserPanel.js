@@ -2,8 +2,16 @@ import React from 'react'
 import {IoIosChatboxes} from 'react-icons/io'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Image from 'react-bootstrap/Image'
+import {useSelector} from 'react-redux'
+import firebase from '../../../firebase'
 
 function UserPanel() {
+
+    const user = useSelector(state => state.user.currentUser)
+    const handleLogout = () => {
+        firebase.auth().signOut();
+    }
+
     return (
         <div>
             {/* Logo */}
@@ -11,18 +19,22 @@ function UserPanel() {
                 <IoIosChatboxes/>{" "} Chat App
             </h3>
             <div style={{ display: 'flex', marginBottom: '1rem'}}>
-                <Image src="" 
+                <Image src={user && user.photoURL} 
                     style={{width: '30p', height: '30px', marginTop: '3px'}}
                     roundedCircle/>
                 <Dropdown>
                     <Dropdown.Toggle
                         style={{background: 'transparent', border: '0px'}}
                     id="dropdown-basic">
-                        User Name
+                        {user.displayName+" "}                       
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
-                        <Dropdown.Item></Dropdown.Item>
-                        <Dropdown.Item></Dropdown.Item>
+                        <Dropdown.Item >
+                            프로필 사진 변경
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={handleLogout}>
+                            로그아웃
+                        </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
             </div>
