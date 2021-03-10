@@ -1,7 +1,9 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import {IoIosChatboxes} from 'react-icons/io'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Image from 'react-bootstrap/Image'
+import Modal from 'react-bootstrap/Modal'
+import Button from 'react-bootstrap/Button'
 import {useDispatch, useSelector} from 'react-redux'
 import firebase from '../../../firebase'
 import mime from 'mime-types'
@@ -45,8 +47,13 @@ function UserPanel() {
             
         }catch(error){
             alert(error)
+
         }
     }
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
     return (
         <div>
@@ -57,7 +64,7 @@ function UserPanel() {
             <div style={{ display: 'flex', marginBottom: '1rem'}}>
                 <Image src={user && user.photoURL} 
                     style={{width: '30p', height: '30px', marginTop: '3px'}}
-                    roundedCircle/>
+                    roundedCircle onClick={handleShow}/>
                 <Dropdown>
                     <Dropdown.Toggle
                         style={{background: 'transparent', border: '0px'}}
@@ -73,6 +80,19 @@ function UserPanel() {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                <Modal show={show} onHide={handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Profile Image</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Image src={user && user.photoURL}/>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleClose}>
+                            Close
+                        </Button>                        
+                    </Modal.Footer>
+                </Modal>
             </div>
             <input
                 onChange={handleUploadImage}
