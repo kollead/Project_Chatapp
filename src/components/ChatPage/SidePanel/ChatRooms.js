@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { connect } from 'react-redux'
+import firebase from '../../../firebase'
 
 export class ChatRooms extends Component {
 
@@ -11,12 +12,25 @@ export class ChatRooms extends Component {
     state={
         show: false,
         name: "",
-        description: ""
+        description: "",
+        chatRoomsRef: firebase.database().ref("chatRooms"),
+        chatRooms: []
     }
     //const handleClose = () => setShow(false);
     handleClose = () => this.setState({show: false});
     //const handleShow = () => setShow(true);
     handleShow = () => this.setState({show: true})
+
+    componentDidMount() {
+        this.AddChatRoomsListeners();
+    }
+    AddChatRoomsListeners=()=>{
+        let chatRoomsArray=[];
+        this.state.chatRoomsRef.on("child_added", DataSnapshot=>{
+            chatRoomsArray.push(DataSnapshot.val());
+            this.setState({chatRooms: chatRoomsArray})
+        })
+    }
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -26,13 +40,47 @@ export class ChatRooms extends Component {
         }
     }
 
-    addChatRoom = () => {
+    addChatRoom = async () => {
+
+        const key= this.state.chatRoomsRef.push().key
         const {name, description} = this.state;
         const {user} = this.props
+        const newChatRoom= {
+            id: key,
+            name: name,
+            description: description,
+            createdBy: {
+                name: user.displayName,
+                image: user.photoURL,
+            }
+        }
+        try {
+            await this.state.chatRoomsRef.child(key).update(newChatRoom)
+            this.setState({
+                name:"",
+                description:"",
+                show: false
+            })
+        } catch (error) {
+            alert(error)
+        }
     }
 
-    ifFormValid=(name, description)=> name&&description;
-
+    isFormValid = (name, description) => 
+        name && description
+    
+    
+    renderChatrooms = (chatRooms) =>
+        //console.log("chatRooms", chatRooms)
+        chatRooms.length > 0 &&
+        chatRooms.map(room => (            
+            <li
+                key={room.id}
+            >
+                # {room.name}
+            </li>
+        ))
+    
 
     render() {
         return (
@@ -48,6 +96,10 @@ export class ChatRooms extends Component {
                         right: 0, cursor: 'pointer'
                     }}  onClick={this.handleShow}/>
                 </div>
+
+                <ul style={{listStyleType: 'none', padding: 0}}>
+                    {this.renderChatrooms(this.state.chatRooms)}
+                </ul>
                 
                 <Modal show={this.state.show} onHide={this.handleClose}>
                     <Modal.Header closeButton>
@@ -57,11 +109,13 @@ export class ChatRooms extends Component {
                         <Form onSubmit={this.handleSubmit}>
                         <Form.Group>
                             <Form.Label>Room Name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter a chat room name"/>
+                            <Form.Control type="text" placeholder="Enter a chat room name"
+                                onChange={(e)=> this.setState({name:e.target.value})}/>
                         </Form.Group>
                         <Form.Group>
                             <Form.Label>Room Description</Form.Label>
-                            <Form.Control type="text" placeholder="Enter a chat room description"/>                        
+                            <Form.Control type="text" placeholder="Enter a chat room description"
+                                onChange={(e)=>this.setState({description:e.target.value})}/>                        
                         </Form.Group>
                         </Form>
                     </Modal.Body>
