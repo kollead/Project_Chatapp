@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { connect } from 'react-redux'
 import firebase from '../../../firebase'
+import {setCurrentChatRoom} from '../../../redux/actions/chatRoom_action'
 
 export class ChatRooms extends Component {
 
@@ -14,13 +15,18 @@ export class ChatRooms extends Component {
         name: "",
         description: "",
         chatRoomsRef: firebase.database().ref("chatRooms"),
-        chatRooms: []
+        chatRooms: [],
+        firstLoad: true,
+        activeChatRoomId:""
     }
     //const handleClose = () => setShow(false);
     handleClose = () => this.setState({show: false});
     //const handleShow = () => setShow(true);
     handleShow = () => this.setState({show: true})
 
+    componentWillUnmount(){
+        this.state.chatRoomsRef.off();
+    }
     componentDidMount() {
         this.AddChatRoomsListeners();
     }
@@ -28,8 +34,20 @@ export class ChatRooms extends Component {
         let chatRoomsArray=[];
         this.state.chatRoomsRef.on("child_added", DataSnapshot=>{
             chatRoomsArray.push(DataSnapshot.val());
-            this.setState({chatRooms: chatRoomsArray})
+            this.setState({chatRooms: chatRoomsArray}, ()=> this.setFirstChatRoom())
         })
+    }
+
+    setFirstChatRoom=()=>{
+        const firstChatRoom=this.state.chatRooms[0]
+        if(this.state.firstLoad&&this.state.chatRooms.length>0){
+            this.props.dispatch(setCurrentChatRoom(firstChatRoom))
+            this.setState({activeChatRoomId: firstChatRoom.id})
+        }
+            
+        
+        this.setState({firstLoad: false})
+        
     }
 
     handleSubmit = (e) => {
@@ -69,13 +87,21 @@ export class ChatRooms extends Component {
     isFormValid = (name, description) => 
         name && description
     
-    
+    changeChatRoom=(room)=>{
+        this.props.dispatch(setCurrentChatRoom(room))
+        this.setState({activeChatRoomId: room.id})
+    }
+
     renderChatrooms = (chatRooms) =>
         //console.log("chatRooms", chatRooms)
         chatRooms.length > 0 &&
         chatRooms.map(room => (            
             <li
                 key={room.id}
+                onClick={()=>this.changeChatRoom(room)}
+                style={{backgroundColor:
+                    room.id===this.state.activeChatRoomId &&
+                    "#ffffff45"}}
             >
                 # {room.name}
             </li>
