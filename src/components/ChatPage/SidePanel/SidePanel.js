@@ -10,6 +10,7 @@ function SidePanel() {
             style={{
                 backgroundColor: '#7b83eb',
                 padding: '2rem',
+                height: '100%',
                 minHeight: '100vh',
                 color: 'white',
                 minWidth: '275px'

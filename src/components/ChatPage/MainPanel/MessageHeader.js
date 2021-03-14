@@ -11,7 +11,6 @@ import Button from 'react-bootstrap/Button'
 import {FaLock} from 'react-icons/fa'
 import {MdFavorite} from 'react-icons/md'
 import {AiOutlineSearch} from 'react-icons/ai'
-import { Accordion, Card } from 'react-bootstrap'
 
 
 function MessageHeader() {
@@ -42,18 +41,19 @@ function MessageHeader() {
                         </InputGroup>
                     </Col>
                 </Row>
-                <Row>
-                    <div style={{display:'flex', justifyContent:'flex-end'}}>
-                        <p>
-                            <Image/> {" "}user name
-                        </p>
-                    </div>
-                </Row>
+                
+                <div style={{display:'flex', justifyContent:'flex-end'
+            }}>
+                    <p>
+                        <Image/> {" "}user name
+                    </p>
+                </div>
+                
                 <Row>
                     <Col>
-                        <Accordion defaultActiveKey="0">
+                        <Accordion>
                             <Card>
-                                <Card.Header>
+                                <Card.Header style={{padding: '0 1rem'}}>
                                     <Accordion.Toggle as={Button} variant="link" eventkey="0">
                                         Click
                                     </Accordion.Toggle>
@@ -65,9 +65,9 @@ function MessageHeader() {
                         </Accordion>
                     </Col>
                     <Col>
-                        <Accordion defaultActiveKey="0">
+                        <Accordion>
                             <Card>
-                                <Card.Header>
+                                <Card.Header style={{padding: '0 1rem'}}>
                                     <Accordion.Toggle as={Button} variant="link" eventkey="0">
                                         Click
                                     </Accordion.Toggle>
