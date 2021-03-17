@@ -5,6 +5,10 @@ import moment from 'moment'
 function Message({message, user}) {
     const timeFromNow = timestamp => 
         moment(timestamp.fromNow())
+
+    const isImage=message=>{
+        return message.hasOwnProperty("image") && !message.hasOwnProperty("content")
+    }
     
     return (
         <Media>
@@ -20,10 +24,13 @@ function Message({message, user}) {
             <h6>
                 {message.user.name}
                 <span style={{fontSize:'10px', color:'gray'}}>
-                    timeFromNow({message.timestamp})
+                    {timeFromNow(message.timestamp)}
                 </span>
             </h6>
-            
+            {isImage(message)} ?
+                <img style={{maxWidth: '300px'}} alt="Image" src={message.image}/>
+            :
+                <p>{message.content}</p>
             </Media.body>
         </Media>
         

@@ -24,11 +24,13 @@ export class MainPanel extends Component {
         let messagesArray=[]
         this.state.messagesRef.child(chatRoomId).on("child_added", dataSnapshot=>{
             messagesArray.push(dataSnapshot.val());
+            console.log("messagesArray", messagesArray)
             this.setState({messages: messagesArray, messagesLoading: false})
         })
     }
 
     renderMessages= (messages) => {
+        console.log("render msg", messages.content)
         messages.length>0 &&
         messages.map(message=>(
             <Message
@@ -39,7 +41,7 @@ export class MainPanel extends Component {
     }
 
     render() {
-        const{messages=this.state}
+        const {messages}=this.state
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
                 <MessageHeader/>
