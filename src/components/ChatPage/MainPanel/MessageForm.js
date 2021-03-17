@@ -44,7 +44,7 @@ function MessageForm() {
         setLoading(true)
         //firebase saving message
         try {
-            await messagesRef.child(chatRoom.id).set(createMessage())
+            await messagesRef.child(chatRoom.id).push().set(createMessage())
             setLoading(false)
             setContent("")
             setErrors([])

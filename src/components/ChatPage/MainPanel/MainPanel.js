@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import MessageHeader from './MessageHeader'
-import Message from './Message'
 import MessageForm from './MessageForm'
+import Message from './Message'
 import {connect} from 'react-redux'
 import firebase from '../../../firebase'
 
@@ -22,25 +22,26 @@ export class MainPanel extends Component {
 
     addMessagesListeners=(chatRoomId)=>{
         let messagesArray=[]
-        this.state.messagesRef.child(chatRoomId).on("child_added", dataSnapshot=>{
+        this.state.messagesRef.child(chatRoomId).on("child_added", dataSnapshot => {
             messagesArray.push(dataSnapshot.val());
-            console.log("messagesArray", messagesArray)
-            this.setState({messages: messagesArray, messagesLoading: false})
+            this.setState({
+                messages: messagesArray,
+                messagesLoading: false
+            })
         })
     }
 
-    renderMessages= (messages) => {
-        console.log("render msg", messages.content)
+    renderMessages=(messages)=>
         messages.length>0 &&
-        messages.map(message=>(
+        messages.map(msg=>(
             <Message
-                key={message.timestamp}
-                message={message}
+                key={msg.timestamp}
+                message={msg}
                 user={this.props.user}/>
         ))
-    }
 
     render() {
+
         const {messages}=this.state
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
