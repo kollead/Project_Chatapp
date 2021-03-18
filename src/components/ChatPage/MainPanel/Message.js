@@ -22,7 +22,8 @@ function Message({message, user}) {
                 src={message.user.image}
                 alt="message.user.name"
             />
-            <Media.Body style={{ marginBottom: '3px' }}>            
+            <Media.Body style={{ marginBottom: '3px' }}
+            >            
             <h6>
                 {message.user.name}{" "}
                 <span style={{fontSize:'10px', color:'gray'}}>
