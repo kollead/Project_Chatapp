@@ -75,6 +75,7 @@ function MessageForm() {
         if(!file) return;
         const filePath = `/message/public/${file.name}`
         const metadata = {contentType: mime.lookup(file.name)}
+        setLoading(true)
         try {
             let uploadTask = storageRef.child(filePath).put(file, metadata)
             uploadTask.on("state_changed", uploadTaskSnapshot=>{
@@ -82,9 +83,23 @@ function MessageForm() {
                     (uploadTaskSnapshot.bytesTransferred/uploadTaskSnapshot.totalBytes)*100
                 )
                 setPercentage(percent)
-            })
+            },
+            err=>{
+                console.error("fileupload err: ", err)
+                setLoading(false)
+            },
+            ()=>{
+                // 저장이 된 후 파일 메시지 데이터베이스에 저장
+                // 저장된 파일을 다운로드 받을 수 있는 URL 가져오기
+                uploadTask.snapshot.ref.getDownloadURL()
+                .then(downloadURL=>{
+                    messagesRef.child(chatRoom.id).push().set(createMessage(downloadURL))
+                    setLoading(false)
+                })
+            }
+            )
         } catch (error) {
-            console.log("error: ",error)
+            alert(error)
         }
     }
 
@@ -98,7 +113,11 @@ function MessageForm() {
                         as="textarea" rows={3}/>
                </Form.Group>
            </Form>
-           <ProgressBar variant="warning" label={`${Percentage}%`} now={Percentage}/>
+           {
+               !(Percentage===0||Percentage===100) &&
+               <ProgressBar variant="warning" label={`${Percentage}%`} now={Percentage}/>
+           
+           }
            <div>
                {Errors.map(errorMsg => <p style={{color:'red'}} key={errorMsg}>
                    {errorMsg}
@@ -109,6 +128,7 @@ function MessageForm() {
                         className="message-form-button"
                         style={{width: '100%'}}
                         onClick={handleSubmit}
+                        disabled={Loading ? true : false}
                     >
                         SUBMIT
                     </button></Col>
@@ -116,11 +136,13 @@ function MessageForm() {
                         className="message-form-button"
                         style={{width: '100%'}}
                         onClick={handleOpenImageRef}
+                        disabled={Loading ? true : false}
                     >
                         UPLOAD
                     </button></Col>
            </Row>
            <input 
+                accept="image/jpeg, image/png"
                 style={{display: 'none'}}
                 type="file" 
                 ref={inputOpenImageRef}
