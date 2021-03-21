@@ -13,11 +13,27 @@ export class MainPanel extends Component {
         messages: [],
         messagesLoading: true
     }
+    
+    constructor(props){
+        super(props)
+        this.bottomMessage=React.createRef()
+    }
 
     componentDidMount(){
         const {chatRoom} = this.props;
         if(chatRoom){
-            this.addMessagesListeners(chatRoom.id)}
+            this.addMessagesListeners(chatRoom.id)
+        };    
+        this.scrolltoBottom();
+    }
+
+    componentDidUpdate(){
+        this.scrolltoBottom();
+    }
+
+    scrolltoBottom=()=>{
+        this.bottomMessage.current.scrollTop=this.bottomMessage.current.scrollHeight        
+    
     }
 
     addMessagesListeners=(chatRoomId)=>{
@@ -29,6 +45,7 @@ export class MainPanel extends Component {
                 messagesLoading: false
             })
         })
+        
     }
 
     renderMessages=(messages)=>
@@ -39,6 +56,7 @@ export class MainPanel extends Component {
                 message={msg}
                 user={this.props.user}/>
         ))
+    
 
     render() {
 
@@ -46,7 +64,8 @@ export class MainPanel extends Component {
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
                 <MessageHeader/>
-                <div style={{
+                <div ref={this.bottomMessage}
+                    style={{
                     width: '100%', 
                     height: '450px',
                     border: '.2rem solid #ececec',
@@ -56,6 +75,7 @@ export class MainPanel extends Component {
                     overflowY: 'auto'
                 }}>
                     {this.renderMessages(messages)}
+                    <div />                    
                 </div>
                 
                 <MessageForm/>
