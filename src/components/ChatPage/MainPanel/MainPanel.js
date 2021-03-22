@@ -11,7 +11,10 @@ export class MainPanel extends Component {
     state={
         messagesRef: firebase.database().ref("messages"),
         messages: [],
-        messagesLoading: true
+        messagesLoading: true,
+        serchTerm:"",
+        searchResults: [],
+        serchLoading: false
     }
     
     constructor(props){
@@ -29,6 +32,30 @@ export class MainPanel extends Component {
 
     componentDidUpdate(){
         this.scrolltoBottom();
+    }
+
+    handleSerchChange = event => {
+        this.setState({
+            serchTerm: event.target.value,
+            serchLoading: true
+        },
+        () => this.handleSerchMessages()
+        )
+    }
+
+    handleSerchMessages = () => {
+        const chatRoomMessages=[...this.state.messages]
+        const regex = new RegExp(this.state.serchTerm, "gi")
+        const serchResults = chatRoomMessages.reduce((acc, message)=>{
+            if((message.content&&message.content.match(regex))||
+            message.user.name.match(regex)){
+                acc.push(message)
+            }
+            return acc
+        }, [])
+        this.setState({
+            serchResults
+        })
     }
 
     scrolltoBottom=()=>{
@@ -63,7 +90,7 @@ export class MainPanel extends Component {
         const {messages}=this.state
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
-                <MessageHeader/>
+                <MessageHeader handleSerchChange={this.handleSerchChange}/>
                 <div ref={this.bottomMessage}
                     style={{
                     width: '100%', 
@@ -74,6 +101,7 @@ export class MainPanel extends Component {
                     marginBottom: '1rem',
                     overflowY: 'auto'
                 }}>
+                    {}
                     {this.renderMessages(messages)}
                     <div />                    
                 </div>
