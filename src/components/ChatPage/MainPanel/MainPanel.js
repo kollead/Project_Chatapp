@@ -34,27 +34,29 @@ export class MainPanel extends Component {
         this.scrolltoBottom();
     }
 
-    handleSerchChange = event => {
+    handleSearchChange = event => {
+        console.log("handleSerchChange")
         this.setState({
-            serchTerm: event.target.value,
-            serchLoading: true
+            searchTerm: event.target.value,
+            searchLoading: true
         },
-        () => this.handleSerchMessages()
+        () => this.handleSearchMessages()
         )
     }
 
-    handleSerchMessages = () => {
+    handleSearchMessages = () => {
         const chatRoomMessages=[...this.state.messages]
-        const regex = new RegExp(this.state.serchTerm, "gi")
-        const serchResults = chatRoomMessages.reduce((acc, message)=>{
+        const regex = new RegExp(this.state.searchTerm, "gi")
+        const searchResults = chatRoomMessages.reduce((acc, message)=>{
             if((message.content&&message.content.match(regex))||
             message.user.name.match(regex)){
                 acc.push(message)
             }
             return acc
         }, [])
+        console.log(searchResults)
         this.setState({
-            serchResults
+            searchResults
         })
     }
 
@@ -87,10 +89,10 @@ export class MainPanel extends Component {
 
     render() {
 
-        const {messages}=this.state
+        const {messages, searchTerm, searchResults}=this.state
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
-                <MessageHeader handleSerchChange={this.handleSerchChange}/>
+                <MessageHeader handleSearchChange={this.handleSearchChange}/>
                 <div ref={this.bottomMessage}
                     style={{
                     width: '100%', 
@@ -101,9 +103,11 @@ export class MainPanel extends Component {
                     marginBottom: '1rem',
                     overflowY: 'auto'
                 }}>
-                    {}
-                    {this.renderMessages(messages)}
-                    <div />                    
+                    {searchTerm ?
+                        this.renderMessages(searchResults)
+                    :
+                        this.renderMessages(messages)}
+                                      
                 </div>
                 
                 <MessageForm/>

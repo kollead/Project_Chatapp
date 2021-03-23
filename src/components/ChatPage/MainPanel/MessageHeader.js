@@ -13,7 +13,7 @@ import {MdFavorite} from 'react-icons/md'
 import {AiOutlineSearch} from 'react-icons/ai'
 
 
-function MessageHeader() {
+function MessageHeader({handleSearchChange}) {
     return (
         <div style={{
             width: '100%',
@@ -34,6 +34,7 @@ function MessageHeader() {
                                 </InputGroup.Text>
                             </InputGroup.Prepend>
                             <FormControl
+                                onChange={handleSearchChange}
                                 placeholder="Search Messages"
                                 aria-label="Search"
 
