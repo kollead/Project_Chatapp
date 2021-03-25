@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form'
 import { connect } from 'react-redux'
 import firebase from '../../../firebase'
 import {setCurrentChatRoom, setPrivateChatRoom} from '../../../redux/actions/chatRoom_action'
+import Badge from 'react-bootstrap/Badge'
 
 export class ChatRooms extends Component {
 
@@ -15,9 +16,11 @@ export class ChatRooms extends Component {
         name: "",
         description: "",
         chatRoomsRef: firebase.database().ref("chatRooms"),
+        messagesRef: firebase.database().ref("messages"),
         chatRooms: [],
         firstLoad: true,
-        activeChatRoomId:""
+        activeChatRoomId:"",
+        notifications: []
     }
     //const handleClose = () => setShow(false);
     handleClose = () => this.setState({show: false});
@@ -30,12 +33,37 @@ export class ChatRooms extends Component {
     componentDidMount() {
         this.AddChatRoomsListeners();
     }
+    
     AddChatRoomsListeners=()=>{
         let chatRoomsArray=[];
         this.state.chatRoomsRef.on("child_added", DataSnapshot=>{
             chatRoomsArray.push(DataSnapshot.val());
-            this.setState({chatRooms: chatRoomsArray}, ()=> this.setFirstChatRoom())
+            this.setState({chatRooms: chatRoomsArray},
+                ()=> this.setFirstChatRoom());
+            this.addNotificationListener(DataSnapshot.key);
         })
+    }
+
+    addNotificationListener=(chatRoomId)=>{
+        this.state.messagesRef.child(chatRoomId).on("value", DataSnapshot=>{
+            if(this.props.chatRoom){
+                this.handleNotification(
+                    chatRoomId,
+                    this.props.chatRoom.id,
+                    this.state.notifications,
+                    DataSnapshot
+                )
+            }
+        })
+    }
+
+    handleNotification=(chatRoomId, curruntChatRoomId, notifications, DataSnapshot)=>{
+
+        //이미 notifacations state안에 알림 정보가 들어있는 채팅방과 그렇지 않은 채팅방 나눠주기
+        let index =  notifications.findIndex(notification=>
+            notification.id===chatRoomId)
+
+        //방 하나하나에 맞는 알림 정보를 notifications state에 넣어주기
     }
 
     setFirstChatRoom=()=>{
@@ -105,6 +133,10 @@ export class ChatRooms extends Component {
                     "#ffffff45"}}
             >
                 # {room.name}
+                <Badge variant="danger"
+                     style={{float: 'right', marginTop: '4px'}}>
+                         1
+                     </Badge>
             </li>
         ))
     
@@ -162,7 +194,9 @@ export class ChatRooms extends Component {
 
 const mapStateToProps = state => {
     return {
-        user:state.user.currentUser
+        user:state.user.currentUser,
+        chatRoom: state.chatRoom.currentChatRoom
+
     }
 }
 export default connect(mapStateToProps)(ChatRooms)
