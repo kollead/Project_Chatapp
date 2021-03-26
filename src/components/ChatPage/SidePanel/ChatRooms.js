@@ -57,13 +57,36 @@ export class ChatRooms extends Component {
         })
     }
 
-    handleNotification=(chatRoomId, curruntChatRoomId, notifications, DataSnapshot)=>{
-
+    handleNotification=(chatRoomId, currentChatRoomId, notifications, DataSnapshot)=>{
+        let lastTotal=0
         //이미 notifacations state안에 알림 정보가 들어있는 채팅방과 그렇지 않은 채팅방 나눠주기
         let index =  notifications.findIndex(notification=>
             notification.id===chatRoomId)
 
+            //notification state 안에 해당 채팅방의 알림 정보가 없음
+            if(index ===-1){
+                notifications.push({
+                    id: chatRoomId,
+                    total: DataSnapshot.numChildren(),
+                    lastKnownTotal: DataSnapshot.numChildren(),
+                    count: 0
+                })
+            }
+            //이미 해당 채팅방의 알림 정보가 있을 때
+            else{
+                if(chatRoomId!==currentChatRoomId){
+                    lastTotal=notifications[index].lastKnownTotal
+
+                    if(DataSnapshot.numChildren()-lastTotal>0){
+                        notifications[index].count = DataSnapshot.numChildren()-lastTotal
+                    }
+                }
+
+                notifications[index].total=DataSnapshot.numChildren()
+            }
+
         //방 하나하나에 맞는 알림 정보를 notifications state에 넣어주기
+        this.setState({notifications})
     }
 
     setFirstChatRoom=()=>{
