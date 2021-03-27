@@ -26,13 +26,10 @@ export class MainPanel extends Component {
         const {chatRoom} = this.props;
         if(chatRoom){
             this.addMessagesListeners(chatRoom.id)
-        };    
-        this.scrolltoBottom();
+        };        
     }
 
-    componentDidUpdate(){
-        this.scrolltoBottom();
-    }
+    
 
     handleSearchChange = event => {
         console.log("handleSerchChange")
@@ -60,10 +57,7 @@ export class MainPanel extends Component {
         })
     }
 
-    scrolltoBottom=()=>{
-        this.bottomMessage.current.scrollTop=this.bottomMessage.current.scrollHeight        
     
-    }
 
     addMessagesListeners=(chatRoomId)=>{
         let messagesArray=[]

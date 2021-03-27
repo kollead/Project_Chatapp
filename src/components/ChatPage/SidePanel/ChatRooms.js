@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {FaRegSmileWink, FaPlus} from 'react-icons/fa'
+import {FaRegSmileWink, FaPlus, FaThList} from 'react-icons/fa'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
@@ -30,6 +30,7 @@ export class ChatRooms extends Component {
     componentWillUnmount(){
         this.state.chatRoomsRef.off();
     }
+
     componentDidMount() {
         this.AddChatRoomsListeners();
     }
@@ -87,6 +88,7 @@ export class ChatRooms extends Component {
 
         //방 하나하나에 맞는 알림 정보를 notifications state에 넣어주기
         this.setState({notifications})
+        console.log("notifications: ", this.state.notifications)
     }
 
     setFirstChatRoom=()=>{
@@ -142,6 +144,32 @@ export class ChatRooms extends Component {
         this.props.dispatch(setCurrentChatRoom(room))
         this.props.dispatch(setPrivateChatRoom(false))
         this.setState({activeChatRoomId: room.id})
+        this.clearNotifications();
+    }
+
+    clearNotifications = () => {
+        console.log("CLEAR")
+        let index = this.state.notifications.findIndex(
+            notification => notification.id===this.props.chatRoom.id
+        )
+        if(index !== -1){
+            let updatedNotifications = [...this.state.notifications];
+            updatedNotifications[index].lastKnownTotal = this.state.notifications[index].total
+            updatedNotifications[index].count=0
+            this.setState({notifications: updatedNotifications})
+        }
+    }
+
+    getNotificationCount = (room) => {
+        //해당 채팅 방의 카운트 수 구하는 중
+        let count = 0;
+        this.state.notifications.forEach(notification=>{
+            if(notification.id===room.id){
+                count=notification.count;
+            }
+        })
+
+        if (count>0) return count;
     }
 
     renderChatrooms = (chatRooms) =>
@@ -158,7 +186,7 @@ export class ChatRooms extends Component {
                 # {room.name}
                 <Badge variant="danger"
                      style={{float: 'right', marginTop: '4px'}}>
-                         1
+                        {this.getNotificationCount(room)}
                      </Badge>
             </li>
         ))
