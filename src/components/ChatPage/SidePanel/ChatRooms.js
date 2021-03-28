@@ -29,6 +29,9 @@ export class ChatRooms extends Component {
 
     componentWillUnmount(){
         this.state.chatRoomsRef.off();
+        this.state.chatRooms.forEach(chatRoom=>{
+            this.state.messagesRef.child(chatRoom.id).off()
+        })
     }
 
     componentDidMount() {
@@ -152,11 +155,14 @@ export class ChatRooms extends Component {
         let index = this.state.notifications.findIndex(
             notification => notification.id===this.props.chatRoom.id
         )
+        console.log("INDEX: ", index)
         if(index !== -1){
             let updatedNotifications = [...this.state.notifications];
             updatedNotifications[index].lastKnownTotal = this.state.notifications[index].total
             updatedNotifications[index].count=0
+            console.log("updated NOTI: ",updatedNotifications)
             this.setState({notifications: updatedNotifications})
+            console.log("setSTATE: ", this.state.notifications)
         }
     }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -9,13 +9,14 @@ import Accordion from 'react-bootstrap/Accordion'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import {FaLock, FaLockOpen} from 'react-icons/fa'
-import {MdFavorite} from 'react-icons/md'
+import {MdFavorite, MdFavoriteBorder} from 'react-icons/md'
 import {AiOutlineSearch} from 'react-icons/ai'
 import {useSelector} from 'react-redux'
 
 
 function MessageHeader({handleSearchChange}) {
 
+    const [isFavorited, setisFavorited] = useState(false)
     const chatRoom = useSelector(state => state.chatRoom.currentChatRoom)
     const isPrivateChatRoom = useSelector(state=>state.chatRoom.isPrivateChatRoom)
     return (
@@ -29,13 +30,25 @@ function MessageHeader({handleSearchChange}) {
         }}>
             <Container>
                 <Row>
-                    <Col><h2>
-                        {isPrivateChatRoom ?
-                            <FaLock/>
+                    <Col>
+                        <h2>
+                            {isPrivateChatRoom ?
+                                <FaLock/>
                             :
-                            <FaLockOpen/>
-                        } 
-                        {' '}{chatRoom&&chatRoom.name} <MdFavorite/></h2></Col>
+                                <FaLockOpen/>
+                            } 
+                            {' '}{chatRoom&&chatRoom.name}{' '}
+                            {!isPrivateChatRoom && 
+                                <span style={{cursor: 'pointer'}} onClick>
+                                    {isFovorited ?
+                                        <MdFavorite stlye={{marginBottom: '10px'}}/>
+                                    :
+                                        <MdFavoriteBorder stlye={{marginBottom: '10px'}}/>
+                                    }               
+                                </span>                                
+                            }                        
+                        </h2>
+                    </Col>
                     <Col>
                         <InputGroup>
                             <InputGroup.Prepend>
