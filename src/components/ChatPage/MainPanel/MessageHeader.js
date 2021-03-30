@@ -22,12 +22,15 @@ function MessageHeader({handleSearchChange}) {
     const user = useSelector(state => state.user.currentUser)
     const isPrivateChatRoom = useSelector(state=>state.chatRoom.isPrivateChatRoom)
     const usersRef = firebase.database().ref("users")
+    
+
     useEffect(() => {
-        addFavoriteListener(user.uid)
-        
+        if(chatRoom&&user){
+            addFavoriteListener(chatRoom.id, user.uid)
+        }        
     }, [])
 
-    const addFavoriteListener = (userId) => {
+    const addFavoriteListener = (chatRoomId, userId) => {
         usersRef
             .child(userId)
             .child("favorited")
@@ -37,6 +40,8 @@ function MessageHeader({handleSearchChange}) {
                     const chatRoomIds = Object.keys(data.val())
                     console.log('data.val(): ', data.val())
                     console.log('chatRoomIds: ', chatRoomIds)
+                    const isAlreadyFavorited = chatRoomIds.includes(chatRoomId)
+                    setisFavorited(isAlreadyFavorited)
                 }
             })
     }
