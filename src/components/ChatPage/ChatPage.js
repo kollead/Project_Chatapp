@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux'
 
 function ChatPage() {
 
-    const currentUser =  useSelector(state=>state.user.currentUser)
+    const currentUser =  useSelector(state => state.user.currentUser)
     const currentChatRoom = useSelector(state => state.chatRoom.currentChatRoom)
     
     return (
