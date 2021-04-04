@@ -129,29 +129,25 @@ function MessageHeader({handleSearchChange}) {
                 
                 <Row>
                     <Col>
-                        <Accordion>
+                        <Accordion defaultActiveKey="0">
                             <Card>
                                 <Card.Header style={{padding: '0 1rem'}}>
-                                    <Accordion.Toggle as={Button} variant="link" eventkey="0">
-                                        Click
-                                    </Accordion.Toggle>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="0">
+                                        Description
+                                </Accordion.Toggle>
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="0">
-                                    <Card.Body>Hey</Card.Body>
+                                    <Card.Body>{chatRoom&&chatRoom.description}</Card.Body>
                                 </Accordion.Collapse>
                             </Card>
-                        </Accordion>
-                    </Col>
-                    <Col>
-                        <Accordion>
                             <Card>
                                 <Card.Header style={{padding: '0 1rem'}}>
-                                    <Accordion.Toggle as={Button} variant="link" eventkey="0">
-                                        Click
-                                    </Accordion.Toggle>
+                                    <Accordion.Toggle as={Button} variant="link" eventKey="1">
+                                        Click me!
+                                </Accordion.Toggle>
                                 </Card.Header>
-                                <Accordion.Collapse eventKey="0">
-                                    <Card.Body>Hey</Card.Body>
+                                <Accordion.Collapse eventKey="1">
+                                    <Card.Body>Hello! I'm another body</Card.Body>
                                 </Accordion.Collapse>
                             </Card>
                         </Accordion>
