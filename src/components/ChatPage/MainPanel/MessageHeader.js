@@ -76,7 +76,7 @@ function MessageHeader({handleSearchChange}) {
     return (
         <div style={{
             width: '100%',
-            height: '170px',
+            height: '190px',
             border: '.2rem solid #ececec',
             borderRadius: '4px',
             padding: '1rem',
@@ -123,13 +123,17 @@ function MessageHeader({handleSearchChange}) {
                 <div style={{display:'flex', justifyContent:'flex-end'
             }}>
                     <p>
-                        <Image/> {" "}user name
+                        <Image 
+                            roundedCircle   
+                            style={{width: '30px', height: '30px'}}
+                            src={chatRoom&&chatRoom.createdBy.image}/>
+                        {" "}{chatRoom&&chatRoom.createdBy.name}
                     </p>
                 </div>
                 
                 <Row>
                     <Col>
-                        <Accordion defaultActiveKey="0">
+                        <Accordion >
                             <Card>
                                 <Card.Header style={{padding: '0 1rem'}}>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="0">
@@ -140,6 +144,10 @@ function MessageHeader({handleSearchChange}) {
                                     <Card.Body>{chatRoom&&chatRoom.description}</Card.Body>
                                 </Accordion.Collapse>
                             </Card>
+                        </Accordion>
+                    </Col>
+                    <Col>
+                        <Accordion>
                             <Card>
                                 <Card.Header style={{padding: '0 1rem'}}>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
