@@ -13,6 +13,7 @@ import {MdFavorite, MdFavoriteBorder} from 'react-icons/md'
 import {AiOutlineSearch} from 'react-icons/ai'
 import {useSelector} from 'react-redux'
 import firebase from '../../../firebase'
+import { Media } from 'react-bootstrap'
 
 
 function MessageHeader({handleSearchChange}) {
@@ -22,6 +23,7 @@ function MessageHeader({handleSearchChange}) {
     const user = useSelector(state => state.user.currentUser)
     const isPrivateChatRoom = useSelector(state=>state.chatRoom.isPrivateChatRoom)
     const usersRef = firebase.database().ref("users")
+    const userPosts = useSelector(state => state.chatRoom.userPosts)
     
 
     useEffect(() => {
@@ -73,6 +75,27 @@ function MessageHeader({handleSearchChange}) {
         }
     }
 
+    const renderUserPosts = (userPosts) => 
+        Object.entries(userPosts)
+        .sort((a,b)=>b[1].count-a[1].count)
+        .map(([key, val], i)=>(
+            <Media key={i}>
+                <img
+                    style={{borderRadius: 25}}
+                    width={48}
+                    height={48}
+                    className="mr-3"
+                    src={val.image}
+                    alt={val.name}
+                />
+                <Media.Body>
+                    <h6>{key}</h6>
+                    <p>{val.count} 개</p>
+                </Media.Body>
+            </Media>
+        ))
+    
+
     return (
         <div style={{
             width: '100%',
@@ -119,18 +142,17 @@ function MessageHeader({handleSearchChange}) {
                         </InputGroup>
                     </Col>
                 </Row>
-                
-                <div style={{display:'flex', justifyContent:'flex-end'
-            }}>
-                    <p>
-                        <Image 
-                            roundedCircle   
-                            style={{width: '30px', height: '30px'}}
-                            src={chatRoom&&chatRoom.createdBy.image}/>
-                        {" "}{chatRoom&&chatRoom.createdBy.name}
-                    </p>
-                </div>
-                
+                {!isPrivateChatRoom&&
+                    <div style={{display:'flex', justifyContent:'flex-end'}}>
+                        <p>
+                            <Image 
+                                roundedCircle   
+                                style={{width: '30px', height: '30px'}}
+                                src={chatRoom&&chatRoom.createdBy.image}/>
+                            {" "}{chatRoom&&chatRoom.createdBy.name}
+                        </p>
+                    </div>
+                }
                 <Row>
                     <Col>
                         <Accordion >
@@ -151,11 +173,13 @@ function MessageHeader({handleSearchChange}) {
                             <Card>
                                 <Card.Header style={{padding: '0 1rem'}}>
                                     <Accordion.Toggle as={Button} variant="link" eventKey="1">
-                                        Click me!
+                                        Posts Count
                                 </Accordion.Toggle>
                                 </Card.Header>
                                 <Accordion.Collapse eventKey="1">
-                                    <Card.Body>Hello! I'm another body</Card.Body>
+                                    <Card.Body>
+                                        {userPosts && renderUserPosts(userPosts)}
+                                    </Card.Body>
                                 </Accordion.Collapse>
                             </Card>
                         </Accordion>

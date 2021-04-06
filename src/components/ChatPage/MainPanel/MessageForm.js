@@ -20,6 +20,7 @@ function MessageForm() {
     const storageRef = firebase.storage().ref()
     const [Percentage, setPercentage] = useState(0)
     const isPrivateChatRoom = useSelector(state => state.chatRoom.isPrivateChatRoom)
+    const typingRef = firebase.database().ref("typing")
 
     const handleChange = (e) => {
         setContent(e.target.value)
@@ -50,6 +51,7 @@ function MessageForm() {
         //firebase saving message
         try {
             await messagesRef.child(chatRoom.id).push().set(createMessage())
+            typingRef.child(chatRoom.id).child(user.uid).remove()
             setLoading(false)
             setContent("")
             setErrors([])
@@ -112,11 +114,21 @@ function MessageForm() {
         }
     }
 
+    const handleKeyDown = () => {
+        if(Content){
+            typingRef.child(chatRoom.id).child(user.uid).set(user.displayName)
+        } else{
+            typingRef.child(chatRoom.id).child(user.uid).remove()
+        }
+
+    }
+
     return (
         <div>
            <Form onSubmit={handleSubmit}>
                <Form.Group>
                     <Form.Control 
+                        onKeyDown={handleKeyDown}
                         value={Content}
                         onChange={handleChange}
                         as="textarea" rows={3}/>
