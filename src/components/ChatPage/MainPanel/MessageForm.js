@@ -115,6 +115,7 @@ function MessageForm() {
     }
 
     const handleKeyDown = () => {
+        console.log("handlekey")
         if(Content){
             typingRef.child(chatRoom.id).child(user.uid).set(user.displayName)
         } else{

@@ -15,7 +15,9 @@ export class MainPanel extends Component {
         messagesLoading: true,
         serchTerm:"",
         searchResults: [],
-        serchLoading: false
+        serchLoading: false,
+        typingRef: firebase.database().ref("typing"),
+        typingUsers: []
     }
     
     constructor(props){
@@ -27,7 +29,38 @@ export class MainPanel extends Component {
         const {chatRoom} = this.props;
         if(chatRoom){
             this.addMessagesListeners(chatRoom.id)
+            this.addTypingListeners(chatRoom.id)
         };        
+    }
+
+    componentWillUnmount() {
+        //this.state.typingRef.off()
+        //this.state.messagesRef.off()
+    }
+
+    addTypingListeners=(chatRoomId)=>{
+        let typingUsers=[]
+        this.state.typingRef.child(chatRoomId).on("child_added", 
+            dataSnapshot=>{
+                if(dataSnapshot.key!==this.props.user.uid){
+                    typingUsers=typingUsers.concat({
+                        id: dataSnapshot.key,
+                        name: dataSnapshot.val()
+                    })
+                    this.setState({typingUsers})
+                }
+            })
+        this.state.typingRef.child(chatRoomId).on("child_removed",
+            dataSnapshot => {
+                const index = typingUsers.findIndex(user=>
+                    user.id===dataSnapshot.key)
+                if(index!==-1){
+                    typingUsers=typingUsers.filter(user=>
+                        user.id!==dataSnapshot.key)
+                    this.setState({typingUsers})
+                }
+            })
+
     }
 
     
@@ -97,10 +130,18 @@ export class MainPanel extends Component {
                 user={this.props.user}/>
         ))
     
+    renderTypingUsers=(typingUsers)=>
+        typingUsers.length>0&&
+        typingUsers.map(user=>(
+            <span>
+                {user.name} 님이 입력하고 있습니다.
+            </span>
+        ))
+    
 
     render() {
 
-        const {messages, searchTerm, searchResults}=this.state
+        const {messages, searchTerm, searchResults, typingUsers}=this.state
         return (
             <div style={{padding: '2rem 2rem 0 2rem'}}>
                 <MessageHeader handleSearchChange={this.handleSearchChange}/>
@@ -118,7 +159,8 @@ export class MainPanel extends Component {
                         this.renderMessages(searchResults)
                     :
                         this.renderMessages(messages)}
-                                      
+                    
+                    {this.renderTypingUsers(typingUsers)}
                 </div>
                 
                 <MessageForm/>
