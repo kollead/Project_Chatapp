@@ -8,6 +8,8 @@ import {setUserPosts} from '../../../redux/actions/chatRoom_action'
 
 
 export class MainPanel extends Component {
+
+    messageEndRef=React.createRef()
     
     state={
         messagesRef: firebase.database().ref("messages"),
@@ -17,7 +19,8 @@ export class MainPanel extends Component {
         searchResults: [],
         serchLoading: false,
         typingRef: firebase.database().ref("typing"),
-        typingUsers: []
+        typingUsers: [],
+        listnerLists: []
     }
     
     constructor(props){
@@ -33,13 +36,28 @@ export class MainPanel extends Component {
         };        
     }
 
+    componentDidUpdate() {
+        if(this.messageEndRef){
+            this.messageEndRef.scrollIntoView({behavior: "smooth"})
+        }
+    }
+
     componentWillUnmount() {
         //this.state.typingRef.off()
-        //this.state.messagesRef.off()
+        this.state.messagesRef.off()
+        this.removeListeners(this.state.listnerLists)
+    }
+
+    removeListeners = (listeners) => {
+        listeners.forEach(listener => {
+            listener.ref.child(listener.id).off(listener.event)
+        });
     }
 
     addTypingListeners=(chatRoomId)=>{
+        
         let typingUsers=[]
+        
         this.state.typingRef.child(chatRoomId).on("child_added", 
             dataSnapshot=>{
                 if(dataSnapshot.key!==this.props.user.uid){
@@ -50,6 +68,9 @@ export class MainPanel extends Component {
                     this.setState({typingUsers})
                 }
             })
+
+        this.addToListenerLists(chatRoomId, this.state.typingRef, "child_added")
+
         this.state.typingRef.child(chatRoomId).on("child_removed",
             dataSnapshot => {
                 const index = typingUsers.findIndex(user=>
@@ -61,6 +82,22 @@ export class MainPanel extends Component {
                 }
             })
 
+            this.addToListenerLists(chatRoomId, this.state.typingRef, "child_removed")
+
+    }
+
+    addToListenerLists = (id, ref, event) => {
+        const index = this.state.listnerLists.findIndex(listener=>{
+            return(
+                listener.id===id &&
+                listener.ref===ref &&
+                listener.event===event
+            )            
+        })
+        if(index === -1){
+            const newListener={id, ref, event}
+            this.setState({listenerLists:  this.state.listnerLists.concat(newListener)})
+        }
     }
 
     
@@ -161,6 +198,7 @@ export class MainPanel extends Component {
                         this.renderMessages(messages)}
                     
                     {this.renderTypingUsers(typingUsers)}
+                    <div ref={node => (this.messageEndRef=node)}/>
                 </div>
                 
                 <MessageForm/>
