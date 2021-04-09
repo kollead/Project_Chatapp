@@ -178,7 +178,7 @@ export class MainPanel extends Component {
     renderMessageSkeleton = (loading) => {
         loading && (
             <>
-                {[1,2,3,4,5,6,].map((v, i) => (
+                {[...Array(10)].map((v, i) => (
                     <Skeleton key={i}/>
                 ))}
             </>

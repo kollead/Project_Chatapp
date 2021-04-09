@@ -115,7 +115,11 @@ function MessageForm() {
     }
 
     const handleKeyDown = () => {
-        console.log("handlekey")
+
+        if(EventTarget.ctrlKey&&event.keyCode===13){
+            handleSubmit();
+        }
+
         if(Content){
             typingRef.child(chatRoom.id).child(user.uid).set(user.displayName)
         } else{
