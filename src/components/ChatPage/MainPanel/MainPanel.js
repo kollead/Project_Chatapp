@@ -175,7 +175,7 @@ export class MainPanel extends Component {
             </span>
         ))
     
-    renderMessageSkeleton = (loading) => {
+    renderMessageSkeleton = (loading) => 
         loading && (
             <>
                 {[...Array(10)].map((v, i) => (
@@ -183,7 +183,7 @@ export class MainPanel extends Component {
                 ))}
             </>
         )
-    }
+    
             
 
     

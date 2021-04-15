@@ -114,10 +114,13 @@ function MessageForm() {
         }
     }
 
-    const handleKeyDown = () => {
+    const handleKeyDown = event => {
 
-        if(EventTarget.ctrlKey&&event.keyCode===13){
-            handleSubmit();
+        console.log('event.keyCode: ', event.keyCode)
+        console.log('event.ctrlKey: ', event.ctrlKey)
+
+        if(event.ctrlKey && event.keyCode===13){
+            handleSubmit()
         }
 
         if(Content){
