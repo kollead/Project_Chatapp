@@ -43,6 +43,7 @@ function MessageForm() {
         return message;
     }
     const handleSubmit = async() =>{
+        console.log("Contentchattoom: ", chatRoom.id)
         if(!Content){
             setErrors(prev=>prev.concat("Type contents first"))
             return;

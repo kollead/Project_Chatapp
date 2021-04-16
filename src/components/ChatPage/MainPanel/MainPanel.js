@@ -158,7 +158,7 @@ export class MainPanel extends Component {
         this.props.dispatch(setUserPosts(userPosts))
     }
 
-    renderMessages=(messages)=>
+    renderMessages=(messages)=>        
         messages.length>0 &&
         messages.map(msg=>(
             <Message
@@ -175,14 +175,14 @@ export class MainPanel extends Component {
             </span>
         ))
     
-    renderMessageSkeleton = (loading) => 
+    /*renderMessageSkeleton = (loading) => 
         loading && (
             <>
                 {[...Array(10)].map((v, i) => (
                     <Skeleton key={i}/>
                 ))}
             </>
-        )
+        )*/
     
             
 
@@ -206,7 +206,7 @@ export class MainPanel extends Component {
                     overflowY: 'auto'
                 }}>
 
-                    {this.renderMessageSkeleton(messagesLoading)}
+                    {/*this.renderMessageSkeleton(messagesLoading)*/}
 
                     {searchTerm ?
                         this.renderMessages(searchResults)
